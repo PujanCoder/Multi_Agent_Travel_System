@@ -1,6 +1,7 @@
 import os 
 import certifi
 from dotenv import load_dotenv
+import asyncio
 
 load_dotenv(override=True)
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
@@ -12,7 +13,7 @@ os.environ["REQUESTS_CA_BUNDLE"] = certifi.where()
 
 from typing import TypedDict, Annotated
 import operator
-import uuid
+import uuid 
 
 import psycopg
 from psycopg.rows import dict_row
@@ -26,7 +27,7 @@ from langchain_core.messages import (
     SystemMessage,
 )
 from langchain_groq import ChatGroq
-from tools.tavily_tool import tavily_search
+from mcp_client_test import tavily_mcp_search
 from tools.flight_tool import search_flights
 
 
@@ -97,7 +98,8 @@ def flight_agent(state: TravelState):
 
 def hotel_agent(state: TravelState):
     query = f"Best hotels for {state['user_query']}"
-    hotel_results = tavily_search(query)
+    # hotel_results = tavily_search(query)
+    hotet_results = asyncio.run(tavily_mcp_search(query))
 
     return {
         "hotel_results": hotel_results,
